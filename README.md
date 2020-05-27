@@ -1,7 +1,30 @@
 # Hahn.ApplicatonProcess
  Hahn-Softwareentwicklung software interview test
  
- -	This application was built using .Net Core 3.1, React.Js and TypeScript.
+ ## Packages Used
+ 
+### For Hahn.ApplicatonProcess.May2020.Data:
+Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.EntityFrameworkCore.Design
+Microsoft.EntityFrameworkCore.SqlServer 
+Microsoft.EntityFrameworkCore.InMemory
+
+### For Hahn.ApplicatonProcess.May2020.Web:
+Serilog.AspNetCore
+Serilog.Sinks.Console
+Serilog.Sinks.Seq
+Swashbuckle.AspNetCore
+
+- To restore the node packages, open gitbash or commandline interface and cd into Hahn.ApplicatonProcess.May2020.Web\ClientApp. Then type
+
+yarn
+
+and press Enter
+
+- If there is the need to build the front end only, then use 'yarn run build' on gitbash/CLI within the ClientApp folder
+ 
+-	This application was built using .Net Core 3.1, React.Js and TypeScript.
 -	The react components are from https://ant.design/
 -	The front end react components are located in Hahn.ApplicatonProcess.May2020.Web\ClientApp\src\components
 -	The TypeScript configuration options are located in Hahn.ApplicatonProcess.May2020.Web\ClientApp\tsconfig.json with hotmodule reload enabled by the "compileOnSave": true
@@ -24,3 +47,6 @@ Address = "Friedhofstraße 11, 93142 Maxhütte-Haidhof,  Germany",
 
 -	Proper validations are done at the backend when creating or updating an Appllicant and expressive feedback are returned to the user
 
+- Logging is done on Hahn.ApplicatonProcess.May2020.Web using serilog with the options loaded from appsettings.json
+
+- The API documentation is handled with Swashbuckle and can be. A clickable link to view the documentaion is provided at the Application's page 
