@@ -4,17 +4,17 @@
  ## Packages Used
  
 ### For Hahn.ApplicatonProcess.May2020.Data:
-Microsoft.EntityFrameworkCore
-Microsoft.EntityFrameworkCore.Tools
-Microsoft.EntityFrameworkCore.Design
-Microsoft.EntityFrameworkCore.SqlServer 
-Microsoft.EntityFrameworkCore.InMemory
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.Tools
+- Microsoft.EntityFrameworkCore.Design
+- Microsoft.EntityFrameworkCore.SqlServer 
+- Microsoft.EntityFrameworkCore.InMemory
 
 ### For Hahn.ApplicatonProcess.May2020.Web:
-Serilog.AspNetCore
-Serilog.Sinks.Console
-Serilog.Sinks.Seq
-Swashbuckle.AspNetCore
+- Serilog.AspNetCore
+- Serilog.Sinks.Console
+- Serilog.Sinks.Seq
+- Swashbuckle.AspNetCore
 
 - To restore the node packages, open gitbash or commandline interface and cd into Hahn.ApplicatonProcess.May2020.Web\ClientApp. Then type
 
