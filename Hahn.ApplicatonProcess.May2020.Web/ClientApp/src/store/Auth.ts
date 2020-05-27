@@ -130,8 +130,6 @@ export const actionCreators =
                 {
                     if (data.code > 0 && data.isAuthenticated)
                     {
-                        //localStorage.removeItem('user');
-                        //localStorage.setItem('user', JSON.stringify(data));
                         dispatch({ type: 'LOG_IN_SUCCESS', appUser: data });                        
                     }
                     else
@@ -140,11 +138,7 @@ export const actionCreators =
                     }
 
                 });
-        //}
-        //else
-        //{
-        //    dispatch({ type: 'LOG_IN_SUCCESS', appUser: JSON.parse(user) });
-        //}
+     
     },
     logOut: (): AppThunkAction<KnownAction> => (dispatch, getState) =>
     {

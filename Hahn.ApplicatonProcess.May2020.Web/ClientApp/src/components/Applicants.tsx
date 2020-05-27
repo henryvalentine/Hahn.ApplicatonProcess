@@ -458,7 +458,8 @@ class Applicants extends React.Component<AppProps>
     {
         let el = this;
         const { searchText, selected, applicant, confirmLoading, buttonText, visible, title, countries, display, disable } = el.state;
-        
+
+        //Prepare table columns for the Applicants list
         const columns =
             [
                 {

@@ -157,7 +157,7 @@ namespace Hahn.ApplicatonProcess.May2020.Web.Controllers
             catch (Exception ex)
             {
                 gVal.Code = -1;
-                gVal.Message = ex.Message != null ? ex.Message : ex.InnerException != null ? ex.InnerException.Message : "An unknown error was encountered. Please try again.";
+                gVal.Message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
 
                 _logger.LogInformation(gVal.Message);
 
@@ -284,7 +284,7 @@ namespace Hahn.ApplicatonProcess.May2020.Web.Controllers
             catch (Exception ex)
             {
                 gVal.Code = -1;
-                gVal.Message = ex.Message != null ? ex.Message : ex.InnerException != null ? ex.InnerException.Message : "An unknown error was encountered. Please try again.";
+                gVal.Message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
                 _logger.LogInformation(gVal.Message);
                 return gVal;
             }
@@ -318,7 +318,7 @@ namespace Hahn.ApplicatonProcess.May2020.Web.Controllers
             }
             catch (Exception ex)
             {
-                var message = ex.Message != null ? ex.Message : ex.InnerException != null ? ex.InnerException.Message : "An unknown error was encountered. Please try again.";
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
                 _logger.LogInformation(message);
                 return new RequestValidator { Message = message, Code = -1 };
             }
@@ -345,8 +345,8 @@ namespace Hahn.ApplicatonProcess.May2020.Web.Controllers
             }
             catch(Exception ex)
             {
-                var message = ex.Message != null ? ex.Message : ex.InnerException != null ? ex.InnerException.Message : "An unknown error was encountered. Please try again.";
-                _logger.LogInformation(message);
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
+                _logger.LogInformation(message);            
                 return new QueryModel { Applicants = new List<Applicant>(), TotalItems = 0 };
             }
             
@@ -367,7 +367,7 @@ namespace Hahn.ApplicatonProcess.May2020.Web.Controllers
             }
             catch (Exception ex)
             {
-                var message = ex.Message != null ? ex.Message : ex.InnerException != null ? ex.InnerException.Message : "An unknown error was encountered. Please try again.";
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
                 _logger.LogInformation(message);
                 return new Applicant();
             }

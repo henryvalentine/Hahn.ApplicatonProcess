@@ -64,7 +64,7 @@ namespace Hahn.ApplicatonProcess.May2020.Web
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
             .UseSerilog() //use serilog
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureWebHostDefaults(webBuilder => //this calls UseKestrel
                 {
                     webBuilder.UseStartup<Startup>();
                 });
