@@ -10,6 +10,9 @@
 - Microsoft.EntityFrameworkCore.SqlServer 
 - Microsoft.EntityFrameworkCore.InMemory
 
+### For Hahn.ApplicatonProcess.May2020.Domain:
+- Microsoft.Extensions.Logging.Abstractions
+
 ### For Hahn.ApplicatonProcess.May2020.Web:
 - Serilog.AspNetCore
 - Serilog.Sinks.Console
