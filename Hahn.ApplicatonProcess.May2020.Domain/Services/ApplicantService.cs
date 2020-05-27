@@ -2,6 +2,7 @@
 using Hahn.ApplicatonProcess.May2020.Data.Models;
 using Hahn.ApplicatonProcess.May2020.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,11 @@ namespace Hahn.ApplicatonProcess.May2020.Domain.Services
     public class ApplicantService: IApplicantService
     {
         private readonly ApplicantDBContext _context;
-        public ApplicantService(ApplicantDBContext ctx)
+        private readonly ILogger<ApplicantService> _logger;
+        public ApplicantService(ApplicantDBContext ctx, ILogger<ApplicantService> logger = null)
         {
             _context = ctx;
+            _logger = logger;
         }
         public long AddApplicant(Applicant applicant)
         {
@@ -118,7 +121,8 @@ namespace Hahn.ApplicatonProcess.May2020.Domain.Services
             }
             catch (Exception ex)
             {
-                // Log Error, return an empty applicant object
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
+                _logger?.LogInformation(message);
                 return new Applicant();
             }
         }
@@ -140,7 +144,8 @@ namespace Hahn.ApplicatonProcess.May2020.Domain.Services
             }
             catch (Exception ex)
             {
-                // Log Error, return an empty applicant object
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
+                _logger?.LogInformation(message);
                 return new Applicant();
             }
         }
@@ -151,6 +156,8 @@ namespace Hahn.ApplicatonProcess.May2020.Domain.Services
             {
                 var skip = (pageNumber - 1) * itemsPerPage;
                 var applicants = new List<Applicant>();
+
+                _logger?.LogInformation("Applicants service called!!!!");
 
                 //the request is a search
                 if (!string.IsNullOrEmpty(searchTerm))
@@ -185,7 +192,8 @@ namespace Hahn.ApplicatonProcess.May2020.Domain.Services
             }
             catch (Exception ex)
             {
-                //Log Error
+                var message = ex.Message != null ? ex.Message + "\n" + ex.StackTrace : ex.InnerException != null ? ex.InnerException.Message + "\n" + ex.StackTrace : "An unknown error was encountered. Please try again.";
+                _logger?.LogInformation(message);
                 dataCount = 0;
                 return new List<Applicant>();
             }

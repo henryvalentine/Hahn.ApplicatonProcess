@@ -49,4 +49,6 @@ Address = "Friedhofstraße 11, 93142 Maxhütte-Haidhof,  Germany",
 
 - Logging is done on Hahn.ApplicatonProcess.May2020.Web using serilog with the options loaded from appsettings.json
 
+- In Hahn.ApplicatonProcess.May2020.Domain, Logging is facilitated by the Microsoft.Extensions.Logging.Abstractions package and by levaraging dependency injection
+
 - The API documentation is handled with Swashbuckle and can be. A clickable link to view the documentaion is provided at the Application's page 

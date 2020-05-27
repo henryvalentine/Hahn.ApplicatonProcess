@@ -43,12 +43,11 @@ namespace Hahn.ApplicatonProcess.May2020.Web
             {
                 builder.AddFilter("Microsoft", LogLevel.Information)
                         .AddFilter("System", LogLevel.Error);
-            });
+            }).AddTransient<IApplicantService, ApplicantService>();
 
             //Use an In-Memory database option with EFCore 3.1
             services.AddDbContext<ApplicantDBContext>(options => options.UseInMemoryDatabase(databaseName: "Applicants"));
-            services.AddTransient<IApplicantService, ApplicantService>();
-
+            
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
