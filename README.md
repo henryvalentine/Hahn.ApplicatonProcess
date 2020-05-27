@@ -27,7 +27,7 @@ and press Enter
 
 - If there is the need to build the front end only, then use 'yarn run build' on gitbash/CLI within the ClientApp folder
  
--	This application was built using .Net Core 3.1, React.Js and TypeScript.
+-	This application was built using .Net Core 3.1, React.Js 16.13.1 and TypeScript 3.9.3.
 -	The react components are from https://ant.design/
 -	The front end react components are located in Hahn.ApplicatonProcess.May2020.Web\ClientApp\src\components
 -	The TypeScript configuration options are located in Hahn.ApplicatonProcess.May2020.Web\ClientApp\tsconfig.json with hotmodule reload enabled by the "compileOnSave": true
