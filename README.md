@@ -44,3 +44,7 @@ and press Enter
 - In Hahn.ApplicatonProcess.May2020.Domain, Logging is facilitated by the Microsoft.Extensions.Logging.Abstractions package and by levaraging dependency injection
 
 - The API documentation is handled with Swashbuckle and can be. A clickable link to view the documentaion is provided at the Application's page 
+
+- For Localisations: I used Hahn.ApplicatonProcess.May2020.Web\ClientApp\src\languages.json to provided English and Deutsch variants of the strings and labels used on the Application page and form. I used Google translation to get the German equivalent of the English words but I don't know how correct the translations are. The words not translated to German are the error messages that I return from the server
+
+- I also wrapped the entire application in i18next provider at the in Hahn.ApplicatonProcess.May2020.Web\ClientApp\src\index.tsx

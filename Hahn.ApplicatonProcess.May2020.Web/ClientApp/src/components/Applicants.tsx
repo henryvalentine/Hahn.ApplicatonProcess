@@ -4,6 +4,8 @@ import * as AuthStore from "../store/Auth";
 import { connect } from "react-redux";
 import { ApplicationState } from '../store';
 import { withRouter } from "react-router";
+import LocalizedStrings from 'react-localization';
+import localisations from '../languages.json';
 import { busyGif } from '../img';
 import { fetchData, postQuery, putQuery, deleteData } from '../utils';
 import { Table, Input, Button, Select, Form, Row, message, Col, Modal, Popconfirm, Tooltip, InputNumber, Cascader, Checkbox, AutoComplete, Switch } from 'antd';
@@ -40,6 +42,8 @@ class Applicants extends React.Component<AppProps>
             countries: [],            
             display: false,
             disable: true,
+            languages: [{ id: 'en', name: 'English' }, { id: 'de', name: 'Deutsch' }],
+            language: { id: 'en', name: 'English' },
             pagination:
             {
                 current: 1,
@@ -59,8 +63,11 @@ class Applicants extends React.Component<AppProps>
             visible: false,
             selected: false
         };          
-
+    //for controlling the Applicant form
     formRef = React.createRef<FormInstance>();
+
+    //For Localisations
+    localisations = new LocalizedStrings(localisations);
 
     async componentDidMount()
     {   
@@ -96,7 +103,7 @@ class Applicants extends React.Component<AppProps>
     edit(data: any, row: any)
     {
         let el = this;
-        el.setState({ visible: true, title: 'Update Applicant', buttonText: 'Update', applicant: data });
+        el.setState({ visible: true, title: el.localisations.updateLb, applicant: data });
 
         //populate form with edit data selected from index table
         setTimeout(function ()
@@ -125,8 +132,9 @@ class Applicants extends React.Component<AppProps>
     //trigger the modal form to add new Applicant
     add()
     {
-        this.setState({ visible: true, title: 'Add Applicant', buttonText: 'Add', applicant: { id: 0, name: '', familyName: '', address: '', emailAdress: '', countryOfOrigin: '', hired: false, age: 0 } });
         let el = this;
+        el.setState({ visible: true, title: el.localisations.addLb, applicant: { id: 0, name: '', familyName: '', address: '', emailAdress: '', countryOfOrigin: '', hired: false, age: 0 } });
+        
         setTimeout(function ()
         {
             el.reset();
@@ -398,6 +406,7 @@ class Applicants extends React.Component<AppProps>
         this.setState({
             visible: false
         });
+        this.reset();
     }
 
     reset()
@@ -405,7 +414,7 @@ class Applicants extends React.Component<AppProps>
         //clear form fields
         this.formRef.current?.resetFields();
         //disable Submit button
-        if (!this.state.disable) this.setState({ disable: true });
+        this.setState({ disable: true });
         //hide reset button
         this.setState({ display: false });
     }
@@ -429,18 +438,38 @@ class Applicants extends React.Component<AppProps>
     determineState()
     {
         let el = this;
-        //use this function to determine if the submit button should be enabled or disabled based on the form's validation outcome
+        
+         //use this to determine if the reset button should be visible or not if some value is entered in any of the form fields
         var fieldValue = el.formRef.current?.getFieldsValue();
+        var fieldsWithValues = Object.values(fieldValue);
 
-        var isprovided = Object.values(fieldValue)?.some(o => o !== undefined);
-        if (isprovided) {
-            if (!el.state.display) el.setState({ display: true });
+        var isprovided = Object.values(fieldValue)?.some(o => o !== undefined && o?.length > 0);
+        if (isprovided)
+        {
+            /*Even if the for fields are cleared without using the rReset Button, the Reset Button is
+            still visible because of the Hired boolean property which is false by default 
+            therefore further checks are necessary to ensure that even if the Hired switch is toggled, the Reset button will not be visible when the forms are cleard
+            either by clearing the fields or clicking the Reset Button */
+            var pp = fieldsWithValues.filter(function (f)
+            {
+                return f !== undefined && f?.length > 0;
+            });
+
+            if (pp.length > 0 && pp.length == 1 && typeof pp[0] === 'boolean')
+            {
+                if (el.state.display) el.reset();
+            }
+            else
+            {
+                if (!el.state.display) el.setState({ display: true });
+            }
         }
-        else {
-            if (el.state.display) el.setState({ display: false });
+        else
+        {
+            if (el.state.display) el.reset();
         }
 
-        //use this to determine if the reset button should be visible or not is some value is entered in any of the form fields
+       //use this function to determine if the submit button should be enabled or disabled based on the form's validation outcome
         var vll: any[] = el.formRef.current?.getFieldsError();
         var isAllprovided = Object.values(fieldValue)?.every(o => o !== undefined);
           
@@ -454,60 +483,78 @@ class Applicants extends React.Component<AppProps>
         }
     }
 
+    toggleLanguage(l)
+    {
+        if (l)
+        {
+            var lngs = this.state.languages.filter(function (ln)
+            {
+                return ln.id === l.key;
+            });
+
+            if (lngs.length > 0)
+            {
+                this.setState({ language: lngs[0] });
+            }
+        }        
+    }
+
     render() 
     {
         let el = this;
-        const { searchText, selected, applicant, confirmLoading, buttonText, visible, title, countries, display, disable } = el.state;
+        const { searchText, selected, applicant, confirmLoading, buttonText, visible, title, countries, display, disable, languages, language } = el.state;
+
+        el.localisations.setLanguage(language.id);
 
         //Prepare table columns for the Applicants list
         const columns =
             [
                 {
-                    title: 'Name',
+                    title: el.localisations.nameLb,
                     dataIndex: 'name',
                     key: 'name'
                 },
                 {
-                    title: 'Family name',
+                    title: el.localisations.familyLb,
                     dataIndex: 'familyName',
                     key: 'familyName'
                 },
                 {
-                    title: 'Age (Years)',
+                    title: el.localisations.ageLb + ' (' + el.localisations.years + ')',
                     dataIndex: 'age',
                     key: 'age'
                 },
                 {
-                    title: 'Email Address',
+                    title: el.localisations.emailLb,
                     dataIndex: 'emailAdress',
                     key: 'emailAdress'
                 },
                 {
-                    title: 'Hired',
+                    title: el.localisations.hiredHdr,
                     dataIndex: 'hired',
                     key: 'hired',
-                    render: (value: any, row: any, index: any) => <span key={value.id}>
-                        {row.hired === true? 'Yes' : 'No'}
+                    render: (value: any, row: any, index: any) => <span className="tb-lb" key={value.id} style={{ color: '#fff', backgroundColor: row.hired === true ? '#388e3c' : '#faad14'}}>
+                        {row.hired === true ? el.localisations.hiredYes : el.localisations.hiredNo}
                     </span>
                 },
                 {
-                    title: 'Address',
+                    title: el.localisations.addressLb,
                     dataIndex: 'address',
                     key: 'address'
                 },
                 {
-                    title: 'Country of Origin',
+                    title: el.localisations.countryLb,
                     dataIndex: 'countryOfOrigin',
                     key: 'countryOfOrigin'
                 },
                 {
-                    title: 'Action',
+                    title: el.localisations.actionLb,
                     dataIndex: '', key: 'x',
                     render: (value: any, row: any, index: any) =>
                         <span key={value.id}>
-                            <a title="update" onClick={() => this.edit(value, row)} style={{ cursor: 'pointer' }}><EditOutlined /></a> &nbsp;
+                            <a title={el.localisations.updateLb} onClick={() => this.edit(value, row)} style={{ cursor: 'pointer' }}><EditOutlined /></a> &nbsp;
                             <Popconfirm placement="top" title='Are you sure to delete this Applicant?' onConfirm={() => this.delete(value, row)} okText="Yes" cancelText="No">
-                                <DeleteOutlined />
+                                <DeleteOutlined title={el.localisations.deleteLb}/>
                             </Popconfirm>
                         </span>
                 }
@@ -539,14 +586,14 @@ class Applicants extends React.Component<AppProps>
         return (
             <div style={{marginTop: '15px', padding: '20px'}}>
                 <Helmet>
-                    <title>Hahn - Applicants</title>
+                    <title>Hahn - {el.localisations.applicants}</title>
                 </Helmet>
                 <img className="waiter2" src={busyGif} alt="" style={{ width: '54px', height: '54px', display: confirmLoading ? 'block' : 'none' }} />  
                 <div style={{display: selected? 'none':'block'}}>
                     <div className="custom-filter-dropdown">
                         <Row style={{ marginTop: '2px' }}>
                             <Col span={24}>
-                                <h4 style={{fontWeight: 'bold', fontSize: '18px'}}>Applicants</h4>
+                                <h4 style={{ fontWeight: 'bold', fontSize: '18px' }}>{el.localisations.applicants}</h4>
                             </Col>
                         </Row>
                         <Row gutter={2} style={{ marginTop: '10px' }}>
@@ -559,11 +606,20 @@ class Applicants extends React.Component<AppProps>
                                 </Select>
                             </Col>
                             <Col xs={8} sm={8} md={6} lg={6} style={{ paddingLeft: '10px' }}>
-                                <Input className="ant-input-lg-2" style={{ width: '100%' }} placeholder="Search..." value={searchText} onChange={(e) => el.onInputChange(e)} onPressEnter={el.onSearch} />
+                                <Input className="ant-input-lg-2" style={{ width: '100%' }} placeholder={el.localisations.search + '...'} value={searchText} onChange={(e) => el.onInputChange(e)} onPressEnter={el.onSearch} />
                             </Col>
-                            <Col xs={6} sm={6} md={10} lg={10} style={{ paddingLeft: '10px' }}>                           
+                            <Col xs={24} sm={24} md={3} lg={3} style={{ marginLeft: '20px' }}>
+                                <Select labelInValue
+                                    defaultValue="en"
+                                    //@ts-ignore
+                                    value={{ key: language.id }}
+                                    onChange={(lng) => el.toggleLanguage(lng)} style={{ width: '100%' }}>
+                                    {languages && languages.map((s: any) => <Option key={s.id} value={s.id}>{s.name}</Option>)}
+                                </Select>
+                            </Col>
+                            <Col xs={6} sm={6} md={8} lg={8} style={{ paddingLeft: '10px' }}>                           
                                 <Button icon={<PlusCircleOutlined />} disabled={confirmLoading} className="login-button" id="push-btn" loading={confirmLoading} key="submit" type="primary" size="large" onClick={() => el.add()} style={{ paddingRight: '40px', paddingLeft: '40px', float: 'right' }}>
-                                    <span id="buttonText">Add Applicant</span>
+                                    <span id="buttonText">{el.localisations.addLb}</span>
                                 </Button>
                             </Col>
                         </Row>
@@ -578,25 +634,26 @@ class Applicants extends React.Component<AppProps>
                             onCancel={() => el.exit()}
                             footer={null}
                            >
-                            <Form id="applicantsForm" onFinish={(values) => el.process(values)} {...formItemLayout} ref={el.formRef} onClick={() => this.determineState()} onBlur={() => this.determineState()} onKeyUp={() => this.determineState()}>
+                            <Form                               
+                                scrollToFirstError
+                                id="applicantsForm" onFinish={(values) => el.process(values)} {...formItemLayout} ref={el.formRef} onClick={() => this.determineState()} onBlur={() => this.determineState()} onKeyUp={() => this.determineState()}>
                                 <div className='ant-row'>
                                     <div className='ant-col-24 padding-md'>
-
                                         <Item
                                             name="name"
                                             label={
                                                 <span>
-                                                    Name&nbsp;
-                                                    <Tooltip title="Applicant's First Name">
+                                                    {el.localisations.nameLb}&nbsp;
+                                                    <Tooltip title={el.localisations.namePop}>
                                                         <QuestionCircleOutlined />
                                                     </Tooltip>
                                                 </span>
                                             }
                                             rules={[{
                                                 type: 'string',
-                                                message: "Applicant's Name must not be less than 5 characters",
+                                                message: el.localisations.name,
                                                 min: 5,
-                                            }, { required: true, message: "Please provide Aplicant's First Name", whitespace: true }]}
+                                            }, { required: true, message: el.localisations.nameReq, whitespace: true }]}
                                         >
                                             <Input  className="ant-input ant-input-lg input-no-border" />
                                         </Item>
@@ -605,116 +662,114 @@ class Applicants extends React.Component<AppProps>
                                             name="familyName"
                                             label={
                                                 <span>
-                                                    Family Name&nbsp;
-                                                    <Tooltip title="Applicant's Last Name">
+                                                    {el.localisations.familyLb} &nbsp;
+                                                    <Tooltip title={el.localisations.familyPop}>
                                                         <QuestionCircleOutlined />
                                                     </Tooltip>
                                                 </span>
                                             }
                                             rules={[{
                                                 type: 'string',
-                                                message: "Applicant's Family Name must not be less than 5 characters",
+                                                message: el.localisations.family,
                                                 min: 5,
-                                            }, { required: true, message: "Please provide Aplicant's Last Name", whitespace: true }]}
+                                            }, { required: true, message: el.localisations.familyReq, whitespace: true }]}
                                         >
                                             <Input className="ant-input ant-input-lg input-no-border" />
                                         </Item>
                                      
-                                        <Item name="emailAdress" label="Email Address"
+                                        <Item name="emailAdress" label={el.localisations.emailLb}
                                             rules={[
                                                 {
                                                     type: 'email',
-                                                    message: 'Invalid Email Address',
+                                                    message: el.localisations.email,
                                                 },
                                                 {
                                                     required: true,
-                                                    message: "Please provide Applicant's Email Address",
+                                                    message: el.localisations.emailReq,
                                                 },
                                             ]}
                                         >
                                             <Input className="ant-input ant-input-lg input-no-border" />
                                         </Item>
 
-                                        <Item name="age" label="Age"
+                                        <Item name="age" label={el.localisations.ageLb + ' (' + el.localisations.years + ')'}
                                             rules={[
                                                 {
                                                     type: 'integer',
-                                                    message: 'Age must fall between 20 and 60 years',
+                                                    message: el.localisations.age,
                                                     min: 20,
                                                     max: 60
                                                 },
                                                 {
                                                     required: true,
-                                                    message: "Please provide Applicant's Age",
+                                                    message: el.localisations.ageReq,
                                                 },
                                             ]}
                                         >
                                             <InputNumber min={20} max={60} className="ant-input ant-input-lg input-no-border"/>
                                         </Item>
 
-                                        <Item name="address" label="Address"
+                                        <Item name="address" label={el.localisations.addressLb}
                                             rules={[
                                                 {
                                                     type: 'string',
-                                                    message: 'Address must not be less than 10 characters',
+                                                    message: el.localisations.address,
                                                     min: 10
                                                 },
                                                 {
                                                     required: true,
-                                                    message: "Please provide Applicant's Address",
+                                                    message: el.localisations.addressReq,
                                                 },
                                             ]}
                                         >
                                             <Input className="ant-input ant-input-lg input-no-border"/>
                                         </Item>
 
-                                        <Item name="countryOfOrigin" label="Country of Origin"
+                                        <Item name="countryOfOrigin" label={el.localisations.countryLb}
                                             rules={[                                               
                                                 {
                                                     required: true,
-                                                    message: "Please select Applicant's Country of Origin",
+                                                    message: el.localisations.country,
                                                 },
                                             ]}
                                         >
                                             <Select                                                
                                                 style={{ width: '100%' }}
                                                 showSearch
-                                                placeholder="-- Select Country of Origin --"
+                                                placeholder={'-- ' + el.localisations.countryPlh + '-- '}
                                                 optionFilterProp="value"
                                                 filterOption={(input, option) =>
                                                     option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                 }
                                             >
-                                                <Option value="">-- Select Country --</Option>
+                                                <Option value="">-- {el.localisations.countryPlh} --</Option>
                                                 {countries && countries.map((s: any) => <Option key={s.name} value={s.name}>{<img style={{ width: '30px', height: '20px', paddingRight: '5px' }} src={s.flag} />}{s.name}</Option>)}
                                             </Select>
                                         </Item>
-                                        <Item name="hired" label="Hire Applicant" className="less-margin"
+                                        <Item name="hired" label={el.localisations.hireLb} className="less-margin"
                                             valuePropName="checked"
                                         >
                                             <Switch
-                                                checkedChildren='YES'
-                                                unCheckedChildren='NO'
+                                                checkedChildren={el.localisations.hiredYes}
+                                                unCheckedChildren={el.localisations.hiredNo}
                                                 defaultChecked={false}
                                             />
-                                        </Item>
-                                        <Item {...tailFormItemLayout} className="ant-modal-footer less-margin">  
-                                            <Row>
-                                                <Col span={12}>                                               
-                                                    <Button type="primary" htmlType="submit" size="large" style={{ float: 'right', paddingRight: '40px', paddingLeft: '40px' }} disabled={confirmLoading || disable}>
-                                                        Submit
+                                        </Item>                                        
+                                        <Row className="ant-modal-footer less-margin">                                            
+                                            <Col span={12}>
+                                                <Button type="primary" htmlType="submit" size="large" style={{ float: 'right', paddingRight: '40px', paddingLeft: '40px' }} disabled={confirmLoading || disable}>
+                                                    {el.localisations.submitLb}
                                                     </Button>
-                                                </Col>
-                                                <Col span={12}>
+                                            </Col>
+                                            <Col span={12}>
 
-                                                    <Popconfirm placement="top" title='Are you sure to reset all fields?' onConfirm={() => this.reset()} okText="Yes" cancelText="No">
-                                                        <Button type="default" disabled={confirmLoading} className="login-button reset" size="large" style={{ marginLeft: '8px', paddingRight: '40px', paddingLeft: '40px', float: 'right', display: display ? 'block' : 'none' }} >
-                                                            <ReloadOutlined /> Reset
+                                                <Popconfirm placement="top" title='Are you sure to reset all fields?' onConfirm={() => this.reset()} okText="Yes" cancelText="No">
+                                                    <Button type="default" disabled={confirmLoading} className="login-button reset" size="large" style={{ marginLeft: '8px', paddingRight: '40px', paddingLeft: '40px', float: 'right', display: display ? 'block' : 'none' }} >
+                                                        <ReloadOutlined /> {el.localisations.resetLb}
                                                     </Button>
-                                                    </Popconfirm>                                                    
-                                                </Col>
-                                           </Row>
-                                        </Item>
+                                                </Popconfirm>
+                                            </Col>
+                                        </Row>
                                     </div>
                                 </div>
                             </Form>

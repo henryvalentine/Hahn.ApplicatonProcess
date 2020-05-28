@@ -21,6 +21,15 @@
     font-size: 16px;
 }
 
+.tb-lb {
+    color: rgb(255, 255, 255);
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-weight: 500;
+}
+
 .ant-input-number 
 {
     width: 100% !important;

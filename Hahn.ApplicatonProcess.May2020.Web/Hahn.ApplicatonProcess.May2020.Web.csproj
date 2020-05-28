@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\languages.json" />
     <None Remove="ClientApp\tsconfig.json" />
   </ItemGroup>
 
@@ -35,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\languages.json" />
     <TypeScriptCompile Include="ClientApp\tsconfig.json" />
   </ItemGroup>
 
