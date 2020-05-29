@@ -308,7 +308,6 @@ class Applicants extends React.Component<AppProps>
 
     async process(applicant: any)
     {
-        console.log(applicant.countryOfOrigin);
         if (!applicant.name)
         {
             message.error("Please provide Applicant's Name");
@@ -446,7 +445,7 @@ class Applicants extends React.Component<AppProps>
         var isprovided = Object.values(fieldValue)?.some(o => o !== undefined && o?.length > 0);
         if (isprovided)
         {
-            /*Even if the for fields are cleared without using the rReset Button, the Reset Button is
+            /*Even if the form fields are cleared without using the rReset Button, the Reset Button is
             still visible because of the Hired boolean property which is false by default 
             therefore further checks are necessary to ensure that even if the Hired switch is toggled, the Reset button will not be visible when the forms are cleard
             either by clearing the fields or clicking the Reset Button */
